@@ -1,5 +1,6 @@
 import { useState, FormEvent } from "react";
 import { ProductCreateFormProps } from "./Products.types";
+import { createProduct } from "../../api/productListApi";
 
 export default function ProductCreateForm({ onCreate }: ProductCreateFormProps) {
 
@@ -15,9 +16,15 @@ export default function ProductCreateForm({ onCreate }: ProductCreateFormProps) 
         setName(event.target.value);
     }
 
-    const onCreateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    const onCreateHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         console.log(name, parsePriceToThousand(price));
+
+        try{
+
+            await createProduct();
+            window.location.reload();
+        }catch(error){console.log(error)}
     };
 
     // Converte string "12,34" / "12.34" para price_times_thousand (int)

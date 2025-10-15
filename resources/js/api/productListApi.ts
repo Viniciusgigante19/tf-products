@@ -24,3 +24,15 @@ export async function deleteProduct(id: number): Promise<ListApi<ProductModel>> 
         throw error;
     }
 }
+
+export async function createProduct(){
+
+    try{
+        
+        const { data } = await axios.post<ListApi<ProductModel>>(`http://localhost:8080/api/products`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao deletar produto:', error);
+        throw error;
+    }
+}
