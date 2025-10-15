@@ -1,19 +1,35 @@
 import { useEffect, useState } from "react";
 import type { ListApi, ProductModel } from "../../app.types";
-import productListApi from "../../api/productListApi";
+import { productListApi, deleteProduct } from "../../api/productListApi";
 import ProductCreateForm from "./ProductCreateForm";
 
 export default function ProductsTwoCols() {
 
     const [data, setData] = useState<ListApi<ProductModel> | "error">();
 
-    useEffect(() => {
-        (async () => {
-            const resp = await productListApi();
-            if ("error" in resp) return setData("error");
-            setData(resp);
-        })();
-    }, []);
+    const loadProducts = async () => {
+        const resp = await productListApi();
+        if ("error" in resp) {
+          setData("error");
+          return;
+        }
+        setData(resp);
+      };
+      
+      useEffect(() => {
+        loadProducts();
+      }, []);
+      
+      const handleDelete = async (id: number) => {
+        try {
+          await deleteProduct(id);
+          console.log(`Produto deletado: ${id}`);
+          await loadProducts();
+        } catch (error) {
+          console.error("Erro ao deletar produto:", error);
+        }
+      };
+      
 
     const formatPrice = (ptt: number) =>
         (ptt / 1000).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -64,7 +80,9 @@ export default function ProductsTwoCols() {
                                     <div className="card-footer bg-white border-0 pt-0">
                                         <div className="d-flex justify-content-between align-items-center">
                                             <span className="badge rounded-pill text-bg-primary">#{p.id}</span>
-                                            <button type="button" className="btn btn-sm btn-outline-danger">
+                                            <button type="button" 
+                                             onClick={() => handleDelete(p.id)}
+                                            className="btn btn-sm btn-outline-danger"> {/* EXCLUIR */}
                                                 Excluir
                                             </button>
                                         </div>
