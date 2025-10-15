@@ -22,7 +22,12 @@ export default function ProductCreateForm({ onCreate }: ProductCreateFormProps) 
 
         try{
 
-            await createProduct();
+            const product = {
+                name,
+                price: Number(price)
+            }
+
+            const data = await createProduct(product);
             window.location.reload();
         }catch(error){console.log(error)}
     };
